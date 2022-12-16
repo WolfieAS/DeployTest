@@ -14,6 +14,16 @@ def getAllUsers():
     conn.close()
     return result
 
+def getUser(username):
+    conn = connection()
+    cur = conn.cursor()
+    cur.execute("SELECT username, password FROM users WHERE username=%s", (username,))
+    conn.commit()
+    result=(cur.fetchall())
+    cur.close()
+    conn.close()
+    return result
+
 def addUser(username, password, email):
     conn = connection()
     cur = conn.cursor()
