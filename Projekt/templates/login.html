@@ -5,8 +5,10 @@
 <title>Insert title here</title>
 </head>
 <body>
-
-<form method="post">
+{% for i in users[1] %}
+<h1>{{i}}</h1></br>
+{% endfor %}
+<form>
   <div class="imgcontainer">
     <img src="img_avatar2.png" alt="Avatar" class="avatar">
   </div>

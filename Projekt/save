@@ -1,0 +1,27 @@
+@app.route('/')
+def index():
+   return "Hello World"
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    users = dbQuery()
+    return render_template('index.html')
+
+def dbQuery():
+    conn = psycopg2.connect("postgres://mcrowrwh:xEsjLVGphy09Q47wKhMvjcg1hOkGLgrD@rogue.db.elephantsql.com/mcrowrwh")
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM users")
+    conn.commit()
+    result=(cur.fetchall())
+    for row in result:
+        print (row)
+        
+    users = cur.fetchall()
+    cur.close()
+    conn.close()
+    return users
+
+  
+if __name__ == "__main__":
+    app.run(debug=True)

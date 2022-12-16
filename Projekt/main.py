@@ -1,19 +1,24 @@
-from flask import Flask
+from flask import Flask, render_template, flash, redirect, request, session, logging, url_for
 import psycopg2
-from flask import Flask, render_template, request, url_for, redirect
+from DBOperations import DBQueries as db
 
-# creates an application that is named after the name of the file
+
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-   return "Hello World"
-
+    return "Starting Page"
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-   return render_template('login.html')
+    users = db.getAllUsers()
+    return render_template('login.html', users = users)
 
-  
-if __name__ == "__main__":
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    users = db.addUser("name1", "password1", "email1")
+    return render_template('login.html')
+
+
+if __name__ == '__main__':
     app.run(debug=True)
