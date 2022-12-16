@@ -1,6 +1,8 @@
 from flask import Flask, render_template, flash, redirect, request, session, logging, url_for
 import psycopg2
+import bcrypt
 from DBOperations import DBQueries as db
+from helperMethods import methods
 
 
 app = Flask(__name__)
@@ -13,19 +15,29 @@ def index():
 def login():
     if request.method == "POST":
         username = request.form['uname']
-        password = request.form['psw']      #Hier muss das passwort noch geprueft werden
-        
-        #pruefung DB
-        #erstellung der User Session
-        return redirect(url_for('mainmenu'))
-
+        password = request.form['psw']
+              
+        if(methods.checkUser(username, password)):
+            #create session
+            return redirect(url_for('mainmenu'))
+        else:
+            return redirect(url_for('login'))
+            
+             
     users = db.getAllUsers()
     return render_template('login.html', users=users)
 
 @app.route('/register', methods=['GET', 'POST'])
-def register():
-    users = db.addUser("name1", "password1", "email1")
-    return render_template('login.html')
+def register():   
+    if request.method == "POST":
+        username = request.form['uname']
+        email = request.form['email']
+        password = request.form['psw']
+        #Validity check
+        password = methods.hashPassword(password) # Hash password
+        db.addUser(username, password, email)
+        return redirect(url_for('login'))
+    return render_template('register.html')
 
 @app.route('/mainmenu', methods=['GET', 'POST'])
 def mainmenu():
