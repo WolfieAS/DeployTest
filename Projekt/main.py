@@ -10,7 +10,8 @@ app.secret_key="hello"
 
 @app.route('/')
 def index():
-    return "Starting Page"
+    tickets = db.getAllTickets()
+    return render_template('index.html', tickets=tickets)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
