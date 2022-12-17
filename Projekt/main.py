@@ -6,6 +6,7 @@ from helperMethods import methods
 
 
 app = Flask(__name__)
+app.secret_key="hello"
 
 @app.route('/')
 def index():
@@ -18,6 +19,7 @@ def login():
         password = request.form['psw']
               
         if(methods.checkUser(username, password)):
+            session['user'] = username
             return redirect(url_for('mainmenu'))
         else:
             return redirect(url_for('login'))
@@ -40,9 +42,16 @@ def register():
 
 @app.route('/mainmenu', methods=['GET', 'POST'])
 def mainmenu():
-    #Pruefung der User Session, ansonsten /login
-    return render_template('mainmenu.html')
-
+    if "user" in session:
+        user = session['user']
+        return render_template('mainmenu.html', username = user)
+    else:
+        return redirect(url_for('login'))
+    
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    session.pop("user", None)
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)
