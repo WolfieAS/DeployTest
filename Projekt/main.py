@@ -18,7 +18,6 @@ def login():
         password = request.form['psw']
               
         if(methods.checkUser(username, password)):
-            #create session
             return redirect(url_for('mainmenu'))
         else:
             return redirect(url_for('login'))
