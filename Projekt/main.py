@@ -11,7 +11,11 @@ app.secret_key="hello"
 @app.route('/')
 def index():
     tickets = db.getAllTickets()
-    return render_template('index.html', tickets=tickets)
+    if "user" in session:
+        user = session['user']
+        return render_template('index.html', tickets=tickets, username=user)
+    else:
+        return render_template('index.html', tickets=tickets)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -52,7 +56,7 @@ def mainmenu():
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session.pop("user", None)
-    return redirect(url_for('login'))
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)

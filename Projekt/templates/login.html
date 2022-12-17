@@ -5,14 +5,7 @@
 <title>Login Page</title>
 </head>
 <body>
-{% for i in users[1] %}
-<h1>{{i}}</h1></br>
-{% endfor %}
 <form action="{{ url_for("login")}}" method="post">
-  <div class="imgcontainer">
-    <img src="img_avatar2.png" alt="Avatar" class="avatar">
-  </div>
-
   <div class="container">
     <label for="uname"><b>Username</b></label>
     <input type="text" placeholder="Enter Username" name="uname" required>
