@@ -1,5 +1,6 @@
 from DBOperations import DBQueries as db
 import bcrypt
+import uuid
 from DBOperations.DBQueries import getUser
 
 def checkUser(username, password):
@@ -22,3 +23,7 @@ def getUser_id(username):
     user_id =  [i[2] for i in user]
     user_id = ' '.join([str(elem) for elem in user_id])
     return user_id
+
+def generateUUID():
+    myuuid = uuid.uuid4()
+    return str(myuuid)

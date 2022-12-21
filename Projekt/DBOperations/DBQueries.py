@@ -58,11 +58,11 @@ def getAllTicketsFromUser(user_id):
     conn.close()
     return result
 
-def registrateTicket(user_id, ticket_id):
+def registrateTicket(serial_no, user_id, ticket_id):
 
     conn = connection()
     cur = conn.cursor()
-    cur.execute("INSERT INTO registrated_tickets (user_id, ticket_id) VALUES (%s, %s)", (user_id, ticket_id))
+    cur.execute("INSERT INTO registrated_tickets (serial_no, user_id, ticket_id) VALUES (%s, %s, %s)", (serial_no, user_id, ticket_id))
     conn.commit()
     cur.close()
     conn.close()
