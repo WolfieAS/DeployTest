@@ -23,15 +23,13 @@ def login():
         username = request.form['uname']
         password = request.form['psw']
               
-        if(methods.checkUser(username, password)):
+        if(methods.checkUser(username, password)):           
             session['user'] = username
+            session['user_id'] = methods.getUser_id(username)
             return redirect(url_for('mainmenu'))
         else:
             return redirect(url_for('login'))
-            
-             
-    users = db.getAllUsers()
-    return render_template('login.html', users=users)
+    return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():   
@@ -50,6 +48,20 @@ def mainmenu():
     if "user" in session:
         user = session['user']
         return render_template('mainmenu.html', username = user)
+    else:
+        return redirect(url_for('login'))
+    
+@app.route('/mytickets', methods=['GET', 'POST'])
+def myTickets():
+    if "user" in session:
+        user = session['user']
+        user_id = session['user_id']
+        ticket = db.getAllTicketsFromUser(user_id)
+        if bool(ticket):
+            return render_template('tickets.html', username = user, ticket=ticket)
+        else:
+            return render_template('tickets.html', username = user, message = "Du hast keine Tickets") 
+        
     else:
         return redirect(url_for('login'))
     

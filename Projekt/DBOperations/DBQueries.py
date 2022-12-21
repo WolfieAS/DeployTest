@@ -20,7 +20,7 @@ def getAllUsers():
 def getUser(username):
     conn = connection()
     cur = conn.cursor()
-    cur.execute("SELECT username, password FROM users WHERE username=%s", (username,))
+    cur.execute("SELECT username, password, user_id FROM users WHERE username=%s", (username,))
     conn.commit()
     result=(cur.fetchall())
     cur.close()
@@ -41,6 +41,17 @@ def getAllTickets():
     conn = connection()
     cur = conn.cursor()
     cur.execute("SELECT * FROM ticket")
+    conn.commit()
+    result=(cur.fetchall())
+    cur.close()
+    conn.close()
+    return result
+
+def getAllTicketsFromUser(user_id):
+    
+    conn = connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM ticket RIGHT JOIN registrated_tickets r ON ticket.ticket_id =r.ticket_id WHERE r.user_id=%s", (user_id,))
     conn.commit()
     result=(cur.fetchall())
     cur.close()

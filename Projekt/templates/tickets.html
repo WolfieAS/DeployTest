@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+</head>
+<body>
+<h1>{{username}}</h1>
+<h1>Meine Tickets</h1>
+<h1>{{message}}</h1>
+{% for i in ticket %}
+<h1>Name: {{i[1]}}</h1><h1>Menge: {{i[5]}}</h1><h1>Preis: {{i[6]}}</h1></br>
+{% endfor %}
+</body>
+</html>
