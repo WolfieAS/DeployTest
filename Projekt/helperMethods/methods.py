@@ -40,7 +40,7 @@ def createQRCode(serial_no):
     im = Image.open('./Photos/qr.jpg')
     im = im.convert("RGBA")
     logo = Image.open('./Photos/logo.jpg')
-    box = (135,135,235,235)
+    box = (135,135,265,265)
     im.crop(box)
     region = logo
     region = region.resize((box[2] - box[0], box[3] - box[1]))
