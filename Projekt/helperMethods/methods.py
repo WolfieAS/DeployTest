@@ -6,6 +6,7 @@ from DBOperations.DBQueries import getUser
 import pyqrcode
 from PIL import Image
 import os
+from dataclasses import replace
 
 def checkUser(username, password):
     user = db.getUser(username)
@@ -28,9 +29,18 @@ def getUser_id(username):
     user_id = ' '.join([str(elem) for elem in user_id])
     return user_id
 
+def getUsertype(username):
+    user = db.getUser(username)
+    usertype =  [i[3] for i in user]
+    usertype = ' '.join([str(elem) for elem in usertype])
+    return usertype
+
 def generateUUID():
     myuuid = uuid.uuid4()
-    return str(myuuid)
+    myuuid = str(myuuid)
+    myuuid = myuuid.replace("-", "")
+    return myuuid
+    
 
 def createQRCode(serial_no):
     input_data = "http://127.0.0.1:5000/mytickets/"+str(serial_no) 
@@ -52,7 +62,9 @@ def createQRCode(serial_no):
 def checkSerial_no(serial_no):
     try:
         dbserial_no = db.checkTicket(serial_no)
-        dbserial_no = ' '.join([str(elem) for elem in dbserial_no[0]])
+        dbserial_no =  [i[0] for i in dbserial_no]
+        dbserial_no = ''.join([str(elem) for elem in dbserial_no[0]])
+        print(dbserial_no)
         if(dbserial_no==serial_no):
             return True
     except IndexError:

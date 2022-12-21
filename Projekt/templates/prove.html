@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Ticketprüfung</title>
+</head>
+<body>
+<h1>{{message}}</h1>
+
+{% for i in info %}
+<h1>Name: {{i[3]}}</h1><h1>Gültig von: {{i[4]}}</h1><h1>Gültig bis: {{i[5]}}</h1></br>
+{% endfor %}
+</body>
+</html>

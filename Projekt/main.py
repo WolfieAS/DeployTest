@@ -27,6 +27,7 @@ def login():
         if(methods.checkUser(username, password)):           
             session['user'] = username
             session['user_id'] = methods.getUser_id(username)
+            session['usertype']=methods.getUsertype(username)
             return redirect(url_for('mainmenu'))
         else:
             return redirect(url_for('login'))
@@ -73,6 +74,19 @@ def qrcode(serial_no):
         methods.createQRCode(serial_no)
     
     return redirect(url_for('myTickets'))
+
+@app.route('/prove/<serial_no>', methods=['GET', 'POST'])
+def proveQR(serial_no):
+    serial_no = str(serial_no)
+    usertype = session['usertype']
+    if int(usertype)==2:
+        if methods.checkSerial_no(serial_no):
+            info = db.checkTicket(serial_no)
+            return render_template('prove.html', info = info)
+        else:
+            return render_template('prove.html', message = "Ticket existiert nicht")
+    else:
+        return redirect(url_for('index'))
    
     
 @app.route('/logout', methods=['GET', 'POST'])
@@ -82,7 +96,7 @@ def logout():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html'), 404
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
