@@ -79,7 +79,7 @@ def addTicket(name:str, valid_from: date, valid_to: date, returnable:bool, amoun
 def checkTicket(serial_no):
     conn = connection()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM registrated_tickets WHERE serial_no=%s", (serial_no,))
+    cur.execute("SELECT serial_no FROM registrated_tickets WHERE serial_no=%s", (serial_no,))
     conn.commit()
     result=(cur.fetchall())
     cur.close()

@@ -3,6 +3,7 @@ import psycopg2
 import bcrypt
 from DBOperations import DBQueries as db
 from helperMethods import methods
+from helperMethods.methods import checkSerial_no
 
 
 app = Flask(__name__)
@@ -64,6 +65,15 @@ def myTickets():
         
     else:
         return redirect(url_for('login'))
+    
+@app.route('/mytickets/<serial_no>', methods=['GET', 'POST'])
+def qrcode(serial_no):
+    
+    if checkSerial_no(serial_no):
+        methods.createQRCode(serial_no)
+    
+    return redirect(url_for('myTickets'))
+   
     
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
