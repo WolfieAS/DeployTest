@@ -61,8 +61,9 @@ def createQRCode(serial_no):
     region = logo
     region = region.resize((box[2] - box[0], box[3] - box[1]))
     im.paste(region,box)
-    im.show()
-    os.remove("./Photos/qr.jpg")
+    return(im)
+    #im.show()
+    #os.remove("./Photos/qr.jpg")
 
 
 def checkSerial_no(serial_no):

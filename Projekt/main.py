@@ -4,10 +4,10 @@ import bcrypt
 from DBOperations import DBQueries as db
 from helperMethods import methods
 from helperMethods.methods import checkSerial_no
-from DBOperations.DBQueries import reedem_ticket
+from fileinput import filename
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="Photos")
 app.secret_key="hello"
 
 @app.route('/')
@@ -62,11 +62,9 @@ def myTickets():
         user_id = session['user_id']
         ticket = db.getAllTicketsFromUser(user_id)
         redeemed_tickets = db.getUser_redeemed_tickets(user_id)
-        print(redeemed_tickets[1])
         ticket = methods.groupTickets(ticket, redeemed_tickets)
-        
         if bool(ticket):
-            return render_template('tickets.html', username = user, ticket=ticket)
+            return render_template('tickets.html', username = user, ticket=ticket, qrcode = filename)
         else:
             return render_template('tickets.html', username = user, message = "Du hast keine Tickets") 
         
