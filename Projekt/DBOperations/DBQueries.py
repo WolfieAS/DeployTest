@@ -2,7 +2,7 @@ import psycopg2
 from _datetime import date
 from locale import str
 from test.test_functools import decimal
-from datetime import date
+from datetime import datetime
 
 def connection():
     conn = psycopg2.connect("postgres://mcrowrwh:xEsjLVGphy09Q47wKhMvjcg1hOkGLgrD@rogue.db.elephantsql.com/mcrowrwh")
@@ -88,13 +88,23 @@ def checkTicket(serial_no):
     return result
 
 def reedem_ticket(serial_no, used_on):
-    today = date.today()
+    today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     conn = connection()
     cur = conn.cursor()
     cur.execute("INSERT INTO redeemed_tickets(serial_no, used_on, used_at) VALUES(%s, %s, %s)", (serial_no, used_on, today,))
     conn.commit()
     cur.close()
     conn.close()
+    
+def getUser_redeemed_tickets(user_id):
+    conn = connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM redeemed_tickets RED INNER JOIN registrated_tickets REG ON REG.serial_no = RED.serial_no WHERE REG.user_id=%s", (user_id,))
+    conn.commit()
+    result=(cur.fetchall())
+    cur.close()
+    conn.close()
+    return result  
 
 def updatePasswort(username, password):
     conn = connection()

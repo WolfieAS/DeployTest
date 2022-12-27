@@ -2,7 +2,7 @@ from DBOperations import DBQueries as db
 import bcrypt
 import qrcode
 import uuid
-from DBOperations.DBQueries import getUser
+from DBOperations.DBQueries import getUser, reedem_ticket
 import pyqrcode
 from PIL import Image
 import os
@@ -63,7 +63,7 @@ def createQRCode(serial_no):
     im.paste(region,box)
     im.show()
     os.remove("./Photos/qr.jpg")
-    
+
 
 def checkSerial_no(serial_no):
     try:
@@ -75,3 +75,16 @@ def checkSerial_no(serial_no):
             return True
     except IndexError:
         return False
+    
+def groupTickets(ticket, redeemed_tickets):   
+    for i in range(len(ticket)):
+        for x in range(len(redeemed_tickets)):
+            if ticket[i][8] == redeemed_tickets[x][1]:
+                used_on = redeemed_tickets[x][2]
+                used_at = redeemed_tickets[x][3]
+                ticket[i] = ticket[i]+(used_on, used_at, )
+        print(ticket[i])
+    return ticket
+        
+
+    

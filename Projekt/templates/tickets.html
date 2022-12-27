@@ -6,10 +6,18 @@
 </head>
 <body>
 <h1>{{username}}</h1>
-<h1>Meine Tickets</h1>
+<h1>Meine Tickets:</h1></br>
 <h1>{{message}}</h1>
+
 {% for i in ticket %}
-<h1>Name: {{i[1]}}</h1><h1>Gültig von: {{i[2]}}</h1><h1>Gültig bis: {{i[3]}}</h1><h1>Seriennummer: {{i[8]}}</h1></br>
+	<h1>Name: {{i[1]}}</h1><h1>Gültig von: {{i[2]}}</h1><h1>Gültig bis: {{i[3]}}</h1><h1>Seriennummer: {{i[8]}}</h1></br>
+	{% if i|length >11 %}
+		<h1>Deine Eingänge:</h1>
+		{% for x in range(11, i|length, 2) %}
+			<h1>Wo: {{i[x]}}, Wann: {{i[x+1]}}</h1>
+		{% endfor %}</br>
+	{% endif %}
 {% endfor %}
+
 </body>
 </html>
