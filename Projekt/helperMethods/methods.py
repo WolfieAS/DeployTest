@@ -35,6 +35,12 @@ def getUsertype(username):
     usertype = ' '.join([str(elem) for elem in usertype])
     return usertype
 
+def getResponsible_for(username):
+    user = db.getUser(username)
+    responsible =  [i[4] for i in user]
+    responsible = ' '.join([str(elem) for elem in responsible])
+    return responsible
+
 def generateUUID():
     myuuid = uuid.uuid4()
     myuuid = str(myuuid)

@@ -28,6 +28,7 @@ def login():
             session['user'] = username
             session['user_id'] = methods.getUser_id(username)
             session['usertype']=methods.getUsertype(username)
+            session['responsible']=methods.getResponsible_for(username)
             return redirect(url_for('mainmenu'))
         else:
             return redirect(url_for('login'))
@@ -79,16 +80,29 @@ def qrcode(serial_no):
 def proveQR(serial_no):
     serial_no = str(serial_no)
     usertype = session['usertype']
+    responsible = session['responsible']
     if int(usertype)==2:
         if methods.checkSerial_no(serial_no):
+            db.reedem_ticket(serial_no, responsible)
             info = db.checkTicket(serial_no)
             return render_template('prove.html', info = info)
         else:
             return render_template('prove.html', message = "Ticket existiert nicht")
     else:
         return redirect(url_for('index'))
-   
     
+@app.route('/profile/restartpassword', methods=['GET', 'POST'])
+def restartpassword():
+    if "user" in session:
+        username = session['user']
+        oldpassword = "test"
+        newpassword = "test1"
+        if(methods.checkUser(username, oldpassword)):
+            db.updatePasswort(username, methods.hashPassword(newpassword))
+            return redirect(url_for('logout'))
+    else:
+        return redirect(url_for('index'))
+       
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session.pop("user", None)
