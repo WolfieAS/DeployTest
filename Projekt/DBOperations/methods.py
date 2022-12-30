@@ -1,4 +1,4 @@
-from ..DBOperations import DBQueries as db
+import DBQueries as db
 import bcrypt
 import uuid
 import pyqrcode
