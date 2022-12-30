@@ -2,8 +2,8 @@ from flask import Flask, render_template, flash, redirect, request, session, log
 import psycopg2
 import bcrypt
 from DBOperations import DBQueries as db
-from helperMethods import methods
-from helperMethods.methods import checkSerial_no
+from DBOperations import methods
+from DBOperations.methods import checkSerial_no
 from fileinput import filename
 
 
