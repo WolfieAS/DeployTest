@@ -1,12 +1,8 @@
-from DBOperations import DBQueries as db
+from ..DBOperations import DBQueries as db
 import bcrypt
-import qrcode
 import uuid
-from DBOperations.DBQueries import getUser, reedem_ticket
 import pyqrcode
 from PIL import Image
-import os
-from dataclasses import replace
 
 def checkUser(username, password):
     user = db.getUser(username)
