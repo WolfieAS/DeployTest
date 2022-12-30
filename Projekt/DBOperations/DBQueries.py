@@ -1,7 +1,6 @@
 import psycopg2
 from _datetime import date
 from locale import str
-from test.test_functools import decimal
 from datetime import datetime
 
 def connection():
@@ -68,7 +67,7 @@ def registrateTicket(serial_no, user_id, ticket_id):
     cur.close()
     conn.close()
 
-def addTicket(name:str, valid_from: date, valid_to: date, returnable:bool, amount:decimal, price:decimal, location:str):
+def addTicket(name:str, valid_from: date, valid_to: date, returnable:bool, amount:int, price:int, location:str):
     
     conn = connection()
     cur = conn.cursor()
