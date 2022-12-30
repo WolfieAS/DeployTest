@@ -1,9 +1,6 @@
-from flask import Flask, render_template, flash, redirect, request, session, logging, url_for
-import psycopg2
-import bcrypt
+from flask import Flask, render_template, redirect, request, session, url_for
 from DBOperations import DBQueries as db
-from DBOperations import methods
-from DBOperations.methods import checkSerial_no
+from Projekt import methods
 from fileinput import filename
 
 
@@ -28,8 +25,8 @@ def login():
         if(methods.checkUser(username, password)):           
             session['user'] = username
             session['user_id'] = methods.getUser_id(username)
-            session['usertype']=methods.getUsertype(username)
-            session['responsible']=methods.getResponsible_for(username)
+            session['usertype']= methods.getUsertype(username)
+            session['responsible']= methods.getResponsible_for(username)
             return redirect(url_for('mainmenu'))
         else:
             return redirect(url_for('login'))
@@ -74,7 +71,7 @@ def myTickets():
 @app.route('/mytickets/<serial_no>', methods=['GET', 'POST'])
 def qrcode(serial_no):
     
-    if checkSerial_no(serial_no):
+    if methods.checkSerial_no(serial_no):
         methods.createQRCode(serial_no)
     
     return redirect(url_for('myTickets'))
