@@ -1,6 +1,5 @@
 from flask import Flask, render_template, redirect, request, session, url_for
 from DBOperations import DBQueries as db
-from Projekt import methods
 from fileinput import filename
 
 
@@ -22,11 +21,11 @@ def login():
         username = request.form['uname']
         password = request.form['psw']
               
-        if(methods.checkUser(username, password)):           
+        if(db.checkUser(username, password)):
             session['user'] = username
-            session['user_id'] = methods.getUser_id(username)
-            session['usertype']= methods.getUsertype(username)
-            session['responsible']= methods.getResponsible_for(username)
+            session['user_id'] = db.getUser_id(username)
+            session['usertype']= db.getUsertype(username)
+            session['responsible']= db.getResponsible_for(username)
             return redirect(url_for('mainmenu'))
         else:
             return redirect(url_for('login'))
@@ -59,7 +58,7 @@ def myTickets():
         user_id = session['user_id']
         ticket = db.getAllTicketsFromUser(user_id)
         redeemed_tickets = db.getUser_redeemed_tickets(user_id)
-        ticket = methods.groupTickets(ticket, redeemed_tickets)
+        ticket = db.groupTickets(ticket, redeemed_tickets)
         if bool(ticket):
             return render_template('tickets.html', username = user, ticket=ticket, qrcode = filename)
         else:
@@ -71,8 +70,8 @@ def myTickets():
 @app.route('/mytickets/<serial_no>', methods=['GET', 'POST'])
 def qrcode(serial_no):
     
-    if methods.checkSerial_no(serial_no):
-        methods.createQRCode(serial_no)
+    if db.checkSerial_no(serial_no):
+        db.createQRCode(serial_no)
     
     return redirect(url_for('myTickets'))
 
@@ -82,7 +81,7 @@ def proveQR(serial_no):
     usertype = session['usertype']
     responsible = session['responsible']
     if int(usertype)==2:
-        if methods.checkSerial_no(serial_no):
+        if db.checkSerial_no(serial_no):
             db.reedem_ticket(serial_no, responsible)
             info = db.checkTicket(serial_no)
             return render_template('prove.html', info = info)
@@ -97,8 +96,8 @@ def restartpassword():
         username = session['user']
         oldpassword = "test"
         newpassword = "test1"
-        if(methods.checkUser(username, oldpassword)):
-            db.updatePasswort(username, methods.hashPassword(newpassword))
+        if(db.checkUser(username, oldpassword)):
+            db.updatePasswort(username, db.hashPassword(newpassword))
             return redirect(url_for('logout'))
     else:
         return redirect(url_for('index'))
