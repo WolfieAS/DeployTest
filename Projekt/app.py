@@ -21,7 +21,7 @@ def login():
         username = request.form['uname']
         password = request.form['psw']
               
-        if(db.checkUser(username, password)):
+        if db.checkUser(username, password):
             session['user'] = username
             session['user_id'] = db.getUser_id(username)
             session['usertype']= db.getUsertype(username)
@@ -38,7 +38,7 @@ def register():
         email = request.form['email']
         password = request.form['psw']
         #Validity check
-        password = methods.hashPassword(password) # Hash password
+        password = db.hashPassword(password) # Hash password
         db.addUser(username, password, email)
         return redirect(url_for('login'))
     return render_template('register.html')
