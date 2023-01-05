@@ -72,7 +72,7 @@ def createQRCode(serial_no):
 
 def checkSerial_no(serial_no):
     try:
-        dbserial_no = db.checkTicket(serial_no)
+        dbserial_no = checkTicket(serial_no)
         dbserial_no = [i[0] for i in dbserial_no]
         dbserial_no = ''.join([str(elem) for elem in dbserial_no[0]])
         print(dbserial_no)
