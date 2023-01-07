@@ -20,12 +20,12 @@ def login():
     if request.method == "POST":
         username = request.form['uname']
         password = request.form['psw']
-              
-        if db.checkUser(username, password):
-            session['user'] = username
-            session['user_id'] = db.getUser_id(username)
-            session['usertype'] = db.getUsertype(username)
-            session['responsible'] = db.getResponsible_for(username)
+        val, user = db.checkUser(username, password)
+        if val:
+            session['user'] = user.username
+            session['user_id'] = user.user_id
+            session['usertype'] = user.usertype
+            session['responsible'] = user.responsible_for
             return redirect(url_for('mainmenu'))
         else:
             return redirect(url_for('login'))

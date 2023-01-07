@@ -8,14 +8,37 @@ import pyqrcode
 from PIL import Image
 
 
+class User:
+    user_id: int
+    username: str
+    password: str
+    email: str
+    usertype: int
+    person_id: str
+    responsible_for: str
+
+    def __init__(self, id,name,pw,email,type,person,responsible):
+        self.user_id = id
+        self.username = name
+        self.password = pw
+        self.email = email
+        self.usertype = type
+        self.person_id = person
+        self.responsible_for = responsible
+
+def userFromDB(dbOut):
+    for item in dbOut:
+        if item is None:
+            item = ""
+    return User(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5],dbOut[6])
 def checkUser(username, password):
     user = getUser(username)
-    hashedPassword = [i[1] for i in user][0]
-
-    if user and bcrypt.checkpw(password.encode('utf-8'), hashedPassword.encode('utf-8')):
-        return True
+    print(user)
+    user = userFromDB(user[0])
+    if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+        return True, user
     else:
-        return False
+        return False, None
 
 
 def hashPassword(password):
@@ -108,9 +131,9 @@ def getAllUsers():
 def getUser(username):
     conn = connection()
     cur = conn.cursor()
-    cur.execute("SELECT username, password, user_id, usertype, responsible_for FROM users WHERE username=%s", (username,))
+    cur.execute("SELECT user_id, username, password, email, usertype, person_id, responsible_for FROM users WHERE username=%s", (username,))
     conn.commit()
-    result=(cur.fetchall())
+    result = (cur.fetchall())
     cur.close()
     conn.close()
     return result
