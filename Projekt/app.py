@@ -24,8 +24,8 @@ def login():
         if db.checkUser(username, password):
             session['user'] = username
             session['user_id'] = db.getUser_id(username)
-            session['usertype']= db.getUsertype(username)
-            session['responsible']= db.getResponsible_for(username)
+            session['usertype'] = db.getUsertype(username)
+            session['responsible'] = db.getResponsible_for(username)
             return redirect(url_for('mainmenu'))
         else:
             return redirect(url_for('login'))

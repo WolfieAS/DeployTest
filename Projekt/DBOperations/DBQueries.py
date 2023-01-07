@@ -10,11 +10,7 @@ from PIL import Image
 
 def checkUser(username, password):
     user = getUser(username)
-    hashedPassword = [i[1] for i in user]
-    for elem in hashedPassword:
-        if type(elem) != str:
-            elem = str(elem)
-    hashedPassword = ' '.join([elem for elem in hashedPassword])
+    hashedPassword = [i[1] for i in user][0]
 
     if user and bcrypt.checkpw(password.encode('utf-8'), hashedPassword.encode('utf-8')):
         return True
@@ -43,8 +39,7 @@ def getUsertype(username):
 
 def getResponsible_for(username):
     user = getUser(username)
-    responsible = [i[4] for i in user]
-    responsible = ' '.join([str(elem) for elem in responsible])
+    responsible = [i[4] for i in user][0]
     return responsible
 
 
