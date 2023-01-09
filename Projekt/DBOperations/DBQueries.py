@@ -11,52 +11,65 @@ from flask import jsonify
 
 class User:
     id: int
-    username: str
     password: str
     email: str
     usertype: int
-    person_id: str
     responsible_for: str
+    firstname: str
+    lastname: str
+    birthdate: date
+    zipcode: str
+    street: str
+    city: str
+    country: str
+    phone: str
 
-    def __init__(self, id, name, pw, email, type, person, responsible):
+
+    def __init__(self, id, email, pw, type, responsible, first, last, dob, zip, street, city, country, phone):
         self.id = id
-        self.username = name
-        self.password = pw
         self.email = email
+        self.password = pw
         self.usertype = type
-        self.person_id = person
         self.responsible_for = responsible
-
-    def toJSON(self) -> str:
-        ret = "{" + "\"id\" :\"" + f"{self.id}" + "\",\"username\" :\"" + f"{self.username}" + "\",\"password\" :\"" + f"{self.password}" + "\","
-        ret += "\"email\" :\"" + f"{self.email}" + "\",\"usertype\" :\""f"{self.usertype}" + "\",\"responsible_for\" :\"" + f"{self.responsible_for}" + "\"" + "}"
-        print(ret)
-        return ret
-
-
-class Listing:
-    id: int
-    name: str
+        self.firstname = first
+        self.lastname = last
+        self.birthdate = dob
+        self.zip = zip
+        self.street = street
+        self.city = city
+        self.country = country
+        self.phone = phone
 
 
 class Ticket:
-    id: int
-    name: str
+    serial_id: str
+    user_id: int
+    ticket_id: int
+    firstname: str
+    lastname: str
+    birthdate: date
     valid_from: datetime
     valid_to: datetime
-    returnable: bool
 
+    def __init__(self, serial_id, user_id, ticket_id, firstname, lastname, dob, valid_from, valid_to):
+        self.serial_id = serial_id
+        self.user_id = user_id
+        self.ticket_id = ticket_id
+        self.firstname = firstname
+        self.lastname = lastname
+        self.dob = dob
+        self.valid_from = valid_from
+        self.valid_to = valid_to
 
 def userFromDB(dbOut):
     for item in dbOut:
         if item is None:
             item = ""
-    return User(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5], dbOut[6])
+    return User(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5], dbOut[6], dbOut[7], dbOut[8], dbOut[9], dbOut[10], dbOut[11], dbOut[12])
 
 
 def checkUser(username, password):
     user = getUser(username)
-    print(user)
     user = userFromDB(user[0])
     if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
         return True, user
@@ -67,27 +80,6 @@ def checkUser(username, password):
 def hashPassword(password):
     hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     return hashed.decode('utf-8')
-
-
-def getUser_id(username):
-    user = getUser(username)
-    user_id = [i[2] for i in user]
-    user_id = ' '.join([str(elem) for elem in user_id])
-    return user_id
-
-
-def getUsertype(username):
-    user = getUser(username)
-    usertype = [i[3] for i in user]
-    usertype = ' '.join([str(elem) for elem in usertype])
-    return usertype
-
-
-def getResponsible_for(username):
-    user = getUser(username)
-    responsible = [i[4] for i in user][0]
-    return responsible
-
 
 def generateUUID():
     myuuid = uuid.uuid4()
@@ -157,7 +149,7 @@ def getUser(username):
     conn = connection()
     cur = conn.cursor()
     cur.execute(
-        "SELECT user_id, username, password, email, usertype, person_id, responsible_for FROM users WHERE username=%s",
+        "SELECT user_id, email, password, usertype, responsible_for, firstname, lastname, birthdate, zipcode, street, city, country, phonenumber FROM users WHERE email=%s",
         (username,))
     conn.commit()
     result = (cur.fetchall())

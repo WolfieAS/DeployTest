@@ -16,7 +16,7 @@ def index():
     else:
         return render_template('index.html', tickets=tickets)
 
-"""
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
@@ -24,7 +24,7 @@ def login():
         password = request.form['psw']
         val, user = db.checkUser(username, password)
         if val:
-            session['user'] = user.username
+            session['user'] = user.email
             session['user_id'] = user.id
             session['usertype'] = user.usertype
             session['responsible'] = user.responsible_for
@@ -39,9 +39,11 @@ def login():
     password = request.args.get('psw')
     val, user = db.checkUser(username, password)
     if val:
-        return user.toJSON(), 200
+        return user.__dict__, 200
     else:
         return 403
+"""
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():   
     if request.method == "POST":
