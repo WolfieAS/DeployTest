@@ -6,10 +6,11 @@ import bcrypt
 import uuid
 import pyqrcode
 from PIL import Image
+from flask import jsonify
 
 
 class User:
-    user_id: int
+    id: int
     username: str
     password: str
     email: str
@@ -17,8 +18,8 @@ class User:
     person_id: str
     responsible_for: str
 
-    def __init__(self, id,name,pw,email,type,person,responsible):
-        self.user_id = id
+    def __init__(self, id, name, pw, email, type, person, responsible):
+        self.id = id
         self.username = name
         self.password = pw
         self.email = email
@@ -26,11 +27,33 @@ class User:
         self.person_id = person
         self.responsible_for = responsible
 
+    def toJSON(self) -> str:
+        ret = "{" + "\"id\" :\"" + f"{self.id}" + "\",\"username\" :\"" + f"{self.username}" + "\",\"password\" :\"" + f"{self.password}" + "\","
+        ret += "\"email\" :\"" + f"{self.email}" + "\",\"usertype\" :\""f"{self.usertype}" + "\",\"responsible_for\" :\"" + f"{self.responsible_for}" + "\"" + "}"
+        print(ret)
+        return ret
+
+
+class Listing:
+    id: int
+    name: str
+
+
+class Ticket:
+    id: int
+    name: str
+    valid_from: datetime
+    valid_to: datetime
+    returnable: bool
+
+
 def userFromDB(dbOut):
     for item in dbOut:
         if item is None:
             item = ""
-    return User(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5],dbOut[6])
+    return User(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5], dbOut[6])
+
+
 def checkUser(username, password):
     user = getUser(username)
     print(user)
@@ -118,28 +141,32 @@ def connection():
     conn = psycopg2.connect("postgres://mcrowrwh:xEsjLVGphy09Q47wKhMvjcg1hOkGLgrD@rogue.db.elephantsql.com/mcrowrwh")
     return conn
 
+
 def getAllUsers():
     conn = connection()
     cur = conn.cursor()
     cur.execute("SELECT username FROM users")
-    conn.commit()
-    result=(cur.fetchall())
-    cur.close()
-    conn.close()
-    return result
-
-def getUser(username):
-    conn = connection()
-    cur = conn.cursor()
-    cur.execute("SELECT user_id, username, password, email, usertype, person_id, responsible_for FROM users WHERE username=%s", (username,))
     conn.commit()
     result = (cur.fetchall())
     cur.close()
     conn.close()
     return result
 
-def addUser(username, password, email):
 
+def getUser(username):
+    conn = connection()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT user_id, username, password, email, usertype, person_id, responsible_for FROM users WHERE username=%s",
+        (username,))
+    conn.commit()
+    result = (cur.fetchall())
+    cur.close()
+    conn.close()
+    return result
+
+
+def addUser(username, password, email):
     conn = connection()
     cur = conn.cursor()
     cur.execute("INSERT INTO Users (username, password, email) VALUES (%s, %s, %s)", (username, password, email))
@@ -147,81 +174,95 @@ def addUser(username, password, email):
     cur.close()
     conn.close()
 
+
 def getAllTickets():
-    
     conn = connection()
     cur = conn.cursor()
     cur.execute("SELECT * FROM ticket")
     conn.commit()
-    result=(cur.fetchall())
+    result = (cur.fetchall())
     cur.close()
     conn.close()
     return result
+
 
 def getAllTicketsFromUser(user_id):
-    
     conn = connection()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM ticket RIGHT JOIN registrated_tickets r ON ticket.ticket_id =r.ticket_id WHERE r.user_id=%s", (user_id,))
+    cur.execute(
+        "SELECT * FROM ticket RIGHT JOIN registrated_tickets r ON ticket.ticket_id =r.ticket_id WHERE r.user_id=%s",
+        (user_id,))
     conn.commit()
-    result=(cur.fetchall())
+    result = (cur.fetchall())
     cur.close()
     conn.close()
     return result
 
+
 def registrateTicket(serial_no, user_id, ticket_id):
-
     conn = connection()
     cur = conn.cursor()
-    cur.execute("INSERT INTO registrated_tickets (serial_no, user_id, ticket_id) VALUES (%s, %s, %s)", (serial_no, user_id, ticket_id))
+    cur.execute("INSERT INTO registrated_tickets (serial_no, user_id, ticket_id) VALUES (%s, %s, %s)",
+                (serial_no, user_id, ticket_id))
     conn.commit()
     cur.close()
     conn.close()
 
-def addTicket(name:str, valid_from: date, valid_to: date, returnable:bool, amount:int, price:int, location:str):
-    
+
+def addTicket(name: str, valid_from: date, valid_to: date, returnable: bool, amount: int, price: int, location: str):
     conn = connection()
     cur = conn.cursor()
-    cur.execute("INSERT INTO ticket (name, valid_from, valid_to, returnable, amount, price, location) VALUES (%s, %s, %s, %s, %s, %s, %s)", (name, valid_from, valid_to, returnable, amount, price, location))
+    cur.execute(
+        "INSERT INTO ticket (name, valid_from, valid_to, returnable, amount, price, location) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+        (name, valid_from, valid_to, returnable, amount, price, location))
     conn.commit()
     cur.close()
     conn.close()
-    
+
+
 def checkTicket(serial_no):
     conn = connection()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM registrated_tickets RT INNER JOIN ticket T ON RT.ticket_id=T.ticket_id WHERE RT.serial_no =%s", (serial_no,))
+    cur.execute(
+        "SELECT * FROM registrated_tickets RT INNER JOIN ticket T ON RT.ticket_id=T.ticket_id WHERE RT.serial_no =%s",
+        (serial_no,))
     conn.commit()
-    result=(cur.fetchall())
+    result = (cur.fetchall())
     cur.close()
     conn.close()
     return result
+
 
 def reedem_ticket(serial_no, used_on):
     today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     conn = connection()
     cur = conn.cursor()
-    cur.execute("INSERT INTO redeemed_tickets(serial_no, used_on, used_at) VALUES(%s, %s, %s)", (serial_no, used_on, today,))
+    cur.execute("INSERT INTO redeemed_tickets(serial_no, used_on, used_at) VALUES(%s, %s, %s)",
+                (serial_no, used_on, today,))
     conn.commit()
     cur.close()
     conn.close()
-    
+
+
 def getUser_redeemed_tickets(user_id):
     conn = connection()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM redeemed_tickets RED INNER JOIN registrated_tickets REG ON REG.serial_no = RED.serial_no WHERE REG.user_id=%s", (user_id,))
+    cur.execute(
+        "SELECT * FROM redeemed_tickets RED INNER JOIN registrated_tickets REG ON REG.serial_no = RED.serial_no WHERE REG.user_id=%s",
+        (user_id,))
     conn.commit()
-    result=(cur.fetchall())
+    result = (cur.fetchall())
     cur.close()
     conn.close()
-    return result  
+    return result
+
 
 def updatePasswort(username, password):
     conn = connection()
     cur = conn.cursor()
     cur.execute("UPDATE users SET password=%s WHERE username=%s", (password, username,))
     conn.commit()
-    result=(cur.fetchall())
+    result = (cur.fetchall())
     cur.close()
     conn.close()
     return result

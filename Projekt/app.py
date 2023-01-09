@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, session, url_for
+from flask import Flask, render_template, redirect, request, session, url_for, jsonify
 from DBOperations import DBQueries as db
 from fileinput import filename
 
@@ -15,6 +15,7 @@ def index():
     else:
         return render_template('index.html', tickets=tickets)
 
+"""
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
@@ -23,14 +24,23 @@ def login():
         val, user = db.checkUser(username, password)
         if val:
             session['user'] = user.username
-            session['user_id'] = user.user_id
+            session['user_id'] = user.id
             session['usertype'] = user.usertype
             session['responsible'] = user.responsible_for
             return redirect(url_for('mainmenu'))
         else:
             return redirect(url_for('login'))
     return render_template('login.html')
-
+"""
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    username = request.args.get('uname')
+    password = request.args.get('psw')
+    val, user = db.checkUser(username, password)
+    if val:
+        return user.toJSON(), 200
+    else:
+        return 403
 @app.route('/register', methods=['GET', 'POST'])
 def register():   
     if request.method == "POST":
