@@ -1,9 +1,10 @@
 from flask import Flask, render_template, redirect, request, session, url_for, jsonify
 from DBOperations import DBQueries as db
 from fileinput import filename
-
+from flask_cors import CORS
 
 app = Flask(__name__, static_folder="Photos")
+CORS(app)
 app.secret_key="hello"
 
 @app.route('/')
