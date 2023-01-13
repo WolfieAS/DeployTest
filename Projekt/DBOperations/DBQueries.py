@@ -6,7 +6,6 @@ import bcrypt
 import uuid
 import pyqrcode
 from PIL import Image
-from flask import jsonify
 
 
 class User:
@@ -41,7 +40,7 @@ class User:
         self.phone = phone
 
 
-class Ticket:
+class RegTicket:
     serial_id: str
     user_id: int
     ticket_id: int
@@ -62,9 +61,6 @@ class Ticket:
         self.valid_to = valid_to
 
 def userFromDB(dbOut):
-    for item in dbOut:
-        if item is None:
-            item = ""
     return User(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5], dbOut[6], dbOut[7], dbOut[8], dbOut[9], dbOut[10], dbOut[11], dbOut[12])
 
 

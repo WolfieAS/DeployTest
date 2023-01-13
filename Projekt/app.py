@@ -16,7 +16,7 @@ def index():
     else:
         return render_template('index.html', tickets=tickets)
 
-
+"""
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
@@ -42,7 +42,7 @@ def login():
         return user.__dict__, 200
     else:
         return 403
-"""
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():   
