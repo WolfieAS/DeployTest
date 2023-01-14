@@ -17,14 +17,10 @@ class User:
     firstname: str
     lastname: str
     birthdate: date
-    zipcode: str
-    street: str
-    city: str
-    country: str
     phone: str
 
 
-    def __init__(self, id, email, pw, type, responsible, first, last, dob, zip, street, city, country, phone):
+    def __init__(self, id, email, pw, type, responsible, first, last, dob, phone):
         self.id = id
         self.email = email
         self.password = pw
@@ -33,10 +29,6 @@ class User:
         self.firstname = first
         self.lastname = last
         self.birthdate = dob
-        self.zip = zip
-        self.street = street
-        self.city = city
-        self.country = country
         self.phone = phone
 
 
@@ -60,12 +52,24 @@ class RegTicket:
         self.valid_from = valid_from
         self.valid_to = valid_to
 
+class RedTicket:
+    redeemed_no: str
+    serial_no: int
+    used_on: date
+    used_at: str
+
+    def __init__(self, redeemed_no, serial_no, used_on, used_at):
+        self.redeemed_no = redeemed_no
+        self.serial_no = serial_no
+        self.used_on = used_on
+        self.used_at = used_at
+ 
 def userFromDB(dbOut):
-    return User(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5], dbOut[6], dbOut[7], dbOut[8], dbOut[9], dbOut[10], dbOut[11], dbOut[12])
+    return User(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5], dbOut[6], dbOut[7], dbOut[8])
 
 
-def checkUser(username, password):
-    user = getUser(username)
+def checkUser(email, password):
+    user = getUser(email)
     user = userFromDB(user[0])
     if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
         return True, user
@@ -141,12 +145,12 @@ def getAllUsers():
     return result
 
 
-def getUser(username):
+def getUser(email):
     conn = connection()
     cur = conn.cursor()
     cur.execute(
-        "SELECT user_id, email, password, usertype, responsible_for, firstname, lastname, birthdate, zipcode, street, city, country, phonenumber FROM users WHERE email=%s",
-        (username,))
+        "SELECT user_id, email, password, usertype, responsible_for, firstname, lastname, birthdate, phonenumber FROM users WHERE email=%s",
+        (email,))
     conn.commit()
     result = (cur.fetchall())
     cur.close()
@@ -154,10 +158,10 @@ def getUser(username):
     return result
 
 
-def addUser(username, password, email):
+def addUser(email, password):
     conn = connection()
     cur = conn.cursor()
-    cur.execute("INSERT INTO Users (username, password, email) VALUES (%s, %s, %s)", (username, password, email))
+    cur.execute("INSERT INTO Users (email, password) VALUES (%s, %s)", (email, password))
     conn.commit()
     cur.close()
     conn.close()

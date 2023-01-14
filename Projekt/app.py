@@ -33,10 +33,11 @@ def login():
             return redirect(url_for('login'))
     return render_template('login.html')
 """
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['POST'])
 def login():
-    username = request.args.get('uname')
-    password = request.args.get('psw')
+    data = request.get_json()
+    username = data['username']
+    password = data['password']
     val, user = db.checkUser(username, password)
     if val:
         return user.__dict__, 200
