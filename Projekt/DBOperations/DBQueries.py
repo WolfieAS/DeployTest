@@ -6,6 +6,7 @@ import bcrypt
 import uuid
 import pyqrcode
 from PIL import Image
+from numpy import double
 
 
 class User:
@@ -30,6 +31,28 @@ class User:
         self.lastname = last
         self.birthdate = dob
         self.phone = phone
+
+class Ticket:
+    ticket_id: int
+    name: str
+    valid_from: date
+    valid_to: date
+    returnable: bool
+    amount: int
+    price: double
+    location: str
+    description: str
+    
+    def __init__(self, ticket_id, name, valid_from, valid_to, returnable, amount, price, location, description):
+        self.ticket_id = ticket_id
+        self.name = name
+        self.valid_from = valid_from
+        self.valid_to = valid_to
+        self.returnable = returnable
+        self.amount = amount
+        self.price = price
+        self.location = location
+        self.description = description
 
 
 class RegTicket:
@@ -176,6 +199,10 @@ def getAllTickets():
     cur.close()
     conn.close()
     return result
+
+def ticketAll(dbOut):
+    return Ticket(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5], dbOut[6], dbOut[7], dbOut[8])
+
 
 
 def getAllTicketsFromUser(user_id):

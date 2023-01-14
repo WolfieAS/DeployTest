@@ -15,6 +15,17 @@ def index():
         return render_template('index.html', tickets=tickets, username=user)
     else:
         return render_template('index.html', tickets=tickets)
+    
+@app.route('/allTickets', methods=['GET'])
+def allTickets():
+    t = db.getAllTickets()
+    result = []
+    for i in range(len(t)):
+        obj = db.Ticket(t[i][0], t[i][1], t[i][2], t[i][3], t[i][4], t[i][5], t[i][6], t[i][7], t[i][8])
+        result.append(obj.__dict__)
+        print(t[i]) 
+    return jsonify(result), 200
+    
 
 """
 @app.route('/login', methods=['GET', 'POST'])
@@ -45,7 +56,7 @@ def login():
         return 403
 
 
-@app.route('/register', methods=['GET', 'POST'])
+'''@app.route('/register', methods=['GET', 'POST'])
 def register():   
     if request.method == "POST":
         username = request.form['uname']
@@ -55,7 +66,16 @@ def register():
         password = db.hashPassword(password) # Hash password
         db.addUser(username, password, email)
         return redirect(url_for('login'))
-    return render_template('register.html')
+    return render_template('register.html')'''
+
+@app.route('/register', methods=['POST'])
+def register():   
+    data = request.get_json()
+    username = data['username']
+    password = data['password']
+    #Validity check
+    password = db.hashPassword(password) # Hash password
+    db.addUser(username, password)
 
 @app.route('/mainmenu', methods=['GET', 'POST'])
 def mainmenu():
