@@ -360,3 +360,15 @@ def updatePasswort(username, password):
     cur.close()
     conn.close()
     return result
+
+def updateTicketActive(serial_no, state, reason):
+    conn = connection()
+    cur = conn.cursor()
+    cur.execute("UPDATE registrated_tickets SET active=%s, ban_reason=%s WHERE serial_no=%s",(state, reason, serial_no,))
+    cur.execute("SELECT active FROM registrated_tickets WHERE serial_no=%s",
+                (serial_no,))
+    conn.commit()
+    result = (cur.fetchall())
+    cur.close()
+    conn.close()
+    return result[0][0] == state

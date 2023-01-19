@@ -63,6 +63,17 @@ def check():
     return jsonify(db.checkTicket(ticket_id, serial_no, location))  , 200
 
 
+@app.route('/banticket', methods=['GET'])
+def ban():
+    serial_no = request.args.get("serialno")
+    return jsonify(db.updateTicketActive(serial_no, False, "test")) , 200
+
+@app.route('/unbanticket', methods=['GET'])
+def unban():
+    serial_no = request.args.get("serialno")
+    return jsonify(db.updateTicketActive(serial_no, True, "")) , 200
+
+
 '''@app.route('/register', methods=['GET', 'POST'])
 def register():   
     if request.method == "POST":
