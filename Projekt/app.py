@@ -55,6 +55,13 @@ def login():
     else:
         return 403
 
+@app.route('/checkticket', methods=['GET'])
+def check():
+    ticket_id = request.args.get("ticketid")
+    serial_no = request.args.get("serialno")
+    location = request.args.get("location")
+    return jsonify(db.checkTicket(ticket_id, serial_no, location))  , 200
+
 
 '''@app.route('/register', methods=['GET', 'POST'])
 def register():   
@@ -116,8 +123,8 @@ def proveQR(serial_no):
     responsible = session['responsible']
     if int(usertype)==2:
         if db.checkSerial_no(serial_no):
-            db.reedem_ticket(serial_no, responsible)
-            info = db.checkTicket(serial_no)
+            db.redeem_ticket(serial_no, responsible)
+            info = db.checkTicketOld(serial_no)
             return render_template('prove.html', info = info)
         else:
             return render_template('prove.html', message = "Ticket existiert nicht")

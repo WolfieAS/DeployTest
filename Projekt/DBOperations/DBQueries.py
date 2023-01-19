@@ -56,7 +56,7 @@ class Ticket:
 
 
 class RegTicket:
-    serial_id: str
+    serial_no: str
     user_id: int
     ticket_id: int
     firstname: str
@@ -64,9 +64,13 @@ class RegTicket:
     birthdate: date
     valid_from: datetime
     valid_to: datetime
+    active: bool
+    ban_reason: str
+    uses_left: int
+    subtype: int
 
-    def __init__(self, serial_id, user_id, ticket_id, firstname, lastname, dob, valid_from, valid_to):
-        self.serial_id = serial_id
+    def __init__(self, serial_no, user_id, ticket_id, firstname, lastname, dob, valid_from, valid_to, active, ban_reason, uses_left, subtype):
+        self.serial_no = serial_no
         self.user_id = user_id
         self.ticket_id = ticket_id
         self.firstname = firstname
@@ -74,6 +78,10 @@ class RegTicket:
         self.dob = dob
         self.valid_from = valid_from
         self.valid_to = valid_to
+        self.active = active
+        self.ban_reason = ban_reason
+        self.uses_left = uses_left
+        self.subtype = subtype
 
 class RedTicket:
     redeemed_no: str
@@ -90,6 +98,11 @@ class RedTicket:
 def userFromDB(dbOut):
     return User(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5], dbOut[6], dbOut[7], dbOut[8])
 
+def regTicketFromDB(dbOut):
+    return RegTicket(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5], dbOut[6], dbOut[7], dbOut[8], dbOut[9], dbOut[10], dbOut[11])
+
+def ticketFromDB(dbOut):
+    return Ticket(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5], dbOut[6], dbOut[7], dbOut[8])
 
 def checkUser(email, password):
     user = getUser(email)
@@ -131,7 +144,7 @@ def createQRCode(serial_no):
 
 def checkSerial_no(serial_no):
     try:
-        dbserial_no = checkTicket(serial_no)
+        dbserial_no = checkTicketOld(serial_no)
         dbserial_no = [i[0] for i in dbserial_no]
         dbserial_no = ''.join([str(elem) for elem in dbserial_no[0]])
         print(dbserial_no)
@@ -150,6 +163,27 @@ def groupTickets(ticket, redeemed_tickets):
                 ticket[i] = ticket[i] + (used_on, used_at,)
         print(ticket[i])
     return ticket
+
+def checkTicket(ticket_id, serial_no, location):
+    dbOut = getRegTicket(serial_no)
+    if len(dbOut[0]) == 0:
+        return False
+    regTicket = regTicketFromDB(dbOut[0])
+    if not regTicket.active:
+        return False
+    if location == "Zermatter Bergbahn":
+        return checkTicketLimited(regTicket,location)
+    return int(ticket_id) == regTicket.ticket_id
+
+def checkTicketLimited(regTicket,location):
+    today = datetime.now().strftime("%Y-%m-%d")
+    if len(used_today(regTicket.serial_no,today)) > 0:
+        return True
+    if regTicket.uses_left > 0:
+        update_uses(regTicket.serial_no, regTicket.uses_left - 1)
+        redeem_ticket(regTicket.serial_no,location)
+        return True
+    return False
 
 
 def connection():
@@ -180,6 +214,28 @@ def getUser(email):
     conn.close()
     return result
 
+def getTicket(ticket_id):
+    conn = connection()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT * FROM tickets WHERE ticket_id=%s",
+        (ticket_id,))
+    conn.commit()
+    result = (cur.fetchall())
+    cur.close()
+    conn.close()
+    return result
+def getRegTicket(serial_no):
+    conn = connection()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT * FROM registrated_tickets WHERE serial_no=%s",
+        (serial_no,))
+    conn.commit()
+    result = (cur.fetchall())
+    cur.close()
+    conn.close()
+    return result
 
 def addUser(email, password):
     conn = connection()
@@ -199,10 +255,6 @@ def getAllTickets():
     cur.close()
     conn.close()
     return result
-
-def ticketAll(dbOut):
-    return Ticket(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5], dbOut[6], dbOut[7], dbOut[8])
-
 
 
 def getAllTicketsFromUser(user_id):
@@ -239,7 +291,7 @@ def addTicket(name: str, valid_from: date, valid_to: date, returnable: bool, amo
     conn.close()
 
 
-def checkTicket(serial_no):
+def checkTicketOld(serial_no):
     conn = connection()
     cur = conn.cursor()
     cur.execute(
@@ -252,7 +304,7 @@ def checkTicket(serial_no):
     return result
 
 
-def reedem_ticket(serial_no, used_on):
+def redeem_ticket(serial_no, used_on):
     today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     conn = connection()
     cur = conn.cursor()
@@ -274,6 +326,29 @@ def getUser_redeemed_tickets(user_id):
     cur.close()
     conn.close()
     return result
+
+def used_today(serial_no, today):
+    conn = connection()
+    today+="%"
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT * FROM redeemed_tickets WHERE serial_no=%s AND used_at LIKE %s",
+        (serial_no,today,))
+    conn.commit()
+    result = (cur.fetchall())
+    cur.close()
+    conn.close()
+    print(result)
+    return result
+
+def update_uses(serial_no,uses_left):
+    conn = connection()
+    cur = conn.cursor()
+    cur.execute("UPDATE registrated_tickets SET uses_left=%s WHERE serial_no=%s",
+                (uses_left, serial_no,))
+    conn.commit()
+    cur.close()
+    conn.close()
 
 
 def updatePasswort(username, password):
