@@ -237,10 +237,10 @@ def getRegTicket(serial_no):
     conn.close()
     return result
 
-def addUser(email, password):
+def addUser(email, password, firstname, lastname, agb, birthday, phonenumber):
     conn = connection()
     cur = conn.cursor()
-    cur.execute("INSERT INTO Users (email, password) VALUES (%s, %s)", (email, password))
+    cur.execute("INSERT INTO Users (email, password, firstname, lastname, agb, birthday, phonenumber) VALUES (%s, %s, %s, %s, %s, %s, %s)", (email, password, firstname, lastname, agb, birthday, phonenumber))
     conn.commit()
     cur.close()
     conn.close()

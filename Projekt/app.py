@@ -89,11 +89,15 @@ def register():
 @app.route('/register', methods=['POST'])
 def register():   
     data = request.get_json()
-    username = data['username']
+    email = data['email']
     password = data['password']
+    firstName = data['firstName']
+    lastName = data['lastName']
+    agb = data['agb']
+    phonenumber = data['phonenumber']
     #Validity check
     password = db.hashPassword(password) # Hash password
-    db.addUser(username, password)
+    db.addUser(email, password,firstName, lastName, agb, phonenumber)
 
 @app.route('/mainmenu', methods=['GET', 'POST'])
 def mainmenu():
