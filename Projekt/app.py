@@ -94,10 +94,11 @@ def register():
     firstName = data['firstName']
     lastName = data['lastName']
     agb = data['agb']
+    birthday = data['birthday']
     phonenumber = data['phonenumber']
     #Validity check
     password = db.hashPassword(password) # Hash password
-    db.addUser(email, password,firstName, lastName, agb, phonenumber)
+    db.addUser(email, password, firstName, lastName, agb, birthday, phonenumber)
 
 @app.route('/mainmenu', methods=['GET', 'POST'])
 def mainmenu():
