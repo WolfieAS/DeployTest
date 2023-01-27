@@ -101,7 +101,7 @@ def register():
     password = db.hashPassword(password) # Hash password
     try:
         db.addUser(email, password, firstName, lastName, agb, birthday, phonenumber)
-        return db.userFromDB(db.getUser(email)).__dict__, 200
+        return 200
     except psycopg2.errors.UniqueViolation:
         return 409
 @app.route('/mainmenu', methods=['GET', 'POST'])
