@@ -1,3 +1,4 @@
+import psycopg2
 from flask import Flask, render_template, redirect, request, session, url_for, jsonify
 from DBOperations import DBQueries as db
 from fileinput import filename
@@ -98,8 +99,11 @@ def register():
     phonenumber = data['phonenumber']
     #Validity check
     password = db.hashPassword(password) # Hash password
-    db.addUser(email, password, firstName, lastName, agb, birthday, phonenumber)
-
+    try:
+        db.addUser(email, password, firstName, lastName, agb, birthday, phonenumber)
+        return db.getUser(email), 200
+    except psycopg2.errors.UniqueViolation:
+        return 409
 @app.route('/mainmenu', methods=['GET', 'POST'])
 def mainmenu():
     if "user" in session:

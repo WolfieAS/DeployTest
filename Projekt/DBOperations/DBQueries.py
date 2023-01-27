@@ -17,7 +17,7 @@ class User:
     responsible_for: str
     firstname: str
     lastname: str
-    birthdate: date
+    birthdaY: date
     phone: str
 
 
@@ -29,7 +29,7 @@ class User:
         self.responsible_for = responsible
         self.firstname = first
         self.lastname = last
-        self.birthdate = dob
+        self.birthday = dob
         self.phone = phone
 
 class Ticket:
@@ -61,7 +61,7 @@ class RegTicket:
     ticket_id: int
     firstname: str
     lastname: str
-    birthdate: date
+    birthday: date
     valid_from: datetime
     valid_to: datetime
     active: bool
@@ -206,7 +206,7 @@ def getUser(email):
     conn = connection()
     cur = conn.cursor()
     cur.execute(
-        "SELECT user_id, email, password, usertype, responsible_for, firstname, lastname, birthdate, phonenumber FROM users WHERE email=%s",
+        "SELECT user_id, email, password, usertype, responsible_for, firstname, lastname, birthday, phonenumber FROM users WHERE email=%s",
         (email,))
     conn.commit()
     result = (cur.fetchall())
