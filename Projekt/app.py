@@ -54,7 +54,7 @@ def login():
     if val:
         return user.__dict__, 200
     else:
-        return 403
+        return "",403
 
 @app.route('/checkticket', methods=['GET'])
 def check():
@@ -101,9 +101,9 @@ def register():
     password = db.hashPassword(password) # Hash password
     try:
         db.addUser(email, password, firstName, lastName, agb, birthday, phonenumber)
-        return 200
+        return "",200
     except psycopg2.errors.UniqueViolation:
-        return 409
+        return "",409
 @app.route('/mainmenu', methods=['GET', 'POST'])
 def mainmenu():
     if "user" in session:
