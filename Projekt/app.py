@@ -47,9 +47,9 @@ def login():
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    username = data['username']
+    email = data['email']
     password = data['password']
-    val, user = db.checkUser(username, password)
+    val, user = db.checkUser(email, password)
     if val:
         return user.__dict__, 200
     else:
