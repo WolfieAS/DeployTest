@@ -69,7 +69,7 @@ class RegTicket:
     uses_left: int
     subtype: int
 
-    def __init__(self, serial_no, user_id, ticket_id, firstname, lastname, dob, valid_from, valid_to, active, ban_reason, uses_left, subtype):
+    def __init__(self, serial_no, user_id, ticket_id, firstname, lastname, dob, valid_from, valid_to, active, ban_reason, uses_left, subtype, phonenumber, email):
         self.serial_no = serial_no
         self.user_id = user_id
         self.ticket_id = ticket_id
@@ -82,6 +82,8 @@ class RegTicket:
         self.ban_reason = ban_reason
         self.uses_left = uses_left
         self.subtype = subtype
+        self.phonenumber = phonenumber
+        self.email = email
 
 class RedTicket:
     redeemed_no: str
@@ -99,7 +101,7 @@ def userFromDB(dbOut):
     return User(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5], dbOut[6], dbOut[7], dbOut[8])
 
 def regTicketFromDB(dbOut):
-    return RegTicket(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5], dbOut[6], dbOut[7], dbOut[8], dbOut[9], dbOut[10], dbOut[11])
+    return RegTicket(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5], dbOut[6], dbOut[7], dbOut[8], dbOut[9], dbOut[10], dbOut[11], dbOut[12], dbOut[13])
 
 def ticketFromDB(dbOut):
     return Ticket(dbOut[0], dbOut[1], dbOut[2], dbOut[3], dbOut[4], dbOut[5], dbOut[6], dbOut[7], dbOut[8])
