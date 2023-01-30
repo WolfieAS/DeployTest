@@ -127,7 +127,7 @@ def myTickets():
         
     else:
         return redirect(url_for('login'))
-    
+
 @app.route('/mytickets/<serial_no>', methods=['GET', 'POST'])
 def qrcode(serial_no):
     
@@ -157,7 +157,7 @@ def restartpassword():
         username = session['user']
         oldpassword = "test"
         newpassword = "test1"
-        if(db.checkUser(username, oldpassword)):
+        if db.checkUser(username, oldpassword):
             db.updatePasswort(username, db.hashPassword(newpassword))
             return redirect(url_for('logout'))
     else:
@@ -168,6 +168,12 @@ def logout():
     session.pop("user", None)
     return redirect(url_for('index'))
 
+@app.route('/buy', methods=['POST'])
+def buy():
+    data = request.get_json()
+    ticket_id = data.get("ticketid", 1)
+    ticket = db.ticketFromDB(db.getTicket(ticket_id))
+    db.registrateTicket(db.generateUUID(), data.get("userid",0), ticket_id, data.get("firstname"), data.get("lastname"), data.get("birthday"), ticket.valid_from, ticket.valid_to, data.get("type"))
 @app.errorhandler(404)
 def page_not_found(e):
     return redirect(url_for('index'))
