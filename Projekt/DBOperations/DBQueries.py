@@ -220,7 +220,7 @@ def getTicket(ticket_id):
     conn = connection()
     cur = conn.cursor()
     cur.execute(
-        "SELECT * FROM tickets WHERE ticket_id=%s",
+        "SELECT * FROM ticket WHERE ticket_id=%s",
         (ticket_id,))
     conn.commit()
     result = (cur.fetchall())
