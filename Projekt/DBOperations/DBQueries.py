@@ -156,15 +156,15 @@ def checkSerial_no(serial_no):
         return False
 
 
-def groupTickets(ticket, redeemed_tickets):
-    for i in range(len(ticket)):
+def groupTickets(tickets, redeemed_tickets):
+    for i in range(len(tickets)):
         for x in range(len(redeemed_tickets)):
-            if ticket[i][8] == redeemed_tickets[x][1]:
+            if tickets[i][8] == redeemed_tickets[x][1]:
                 used_on = redeemed_tickets[x][2]
                 used_at = redeemed_tickets[x][3]
-                ticket[i] = ticket[i] + (used_on, used_at,)
-        print(ticket[i])
-    return ticket
+                tickets[i] = tickets[i] + (used_on, used_at,)
+        print(tickets[i])
+    return tickets
 
 def checkTicket(ticket_id, serial_no, location):
     dbOut = getRegTicket(serial_no)

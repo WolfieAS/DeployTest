@@ -8,6 +8,7 @@ app = Flask(__name__, static_folder="Photos")
 CORS(app)
 app.secret_key="hello"
 
+
 @app.route('/')
 def index():
     tickets = db.getAllTickets()
@@ -16,7 +17,8 @@ def index():
         return render_template('index.html', tickets=tickets, username=user)
     else:
         return render_template('index.html', tickets=tickets)
-    
+
+
 @app.route('/allTickets', methods=['GET'])
 def allTickets():
     t = db.getAllTickets()
@@ -45,6 +47,8 @@ def login():
             return redirect(url_for('login'))
     return render_template('login.html')
 """
+
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -55,6 +59,7 @@ def login():
         return user.__dict__, 200
     else:
         return "",403
+
 
 @app.route('/checkticket', methods=['GET'])
 def check():
@@ -68,6 +73,7 @@ def check():
 def ban():
     serial_no = request.args.get("serialno")
     return jsonify(db.updateTicketActive(serial_no, False, "test")) , 200
+
 
 @app.route('/unbanticket', methods=['GET'])
 def unban():
@@ -87,6 +93,7 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html')'''
 
+
 @app.route('/register', methods=['POST'])
 def register():   
     data = request.get_json()
@@ -104,6 +111,8 @@ def register():
         return "",200
     except psycopg2.errors.UniqueViolation:
         return "",409
+
+
 @app.route('/mainmenu', methods=['GET', 'POST'])
 def mainmenu():
     if "user" in session:
@@ -111,22 +120,26 @@ def mainmenu():
         return render_template('mainmenu.html', username = user)
     else:
         return redirect(url_for('login'))
-    
-@app.route('/mytickets', methods=['GET', 'POST'])
+
+
+@app.route('/mytickets', methods=['POST'])
 def myTickets():
-    if "user" in session:
-        user = session['user']
-        user_id = session['user_id']
-        ticket = db.getAllTicketsFromUser(user_id)
-        redeemed_tickets = db.getUser_redeemed_tickets(user_id)
-        ticket = db.groupTickets(ticket, redeemed_tickets)
-        if bool(ticket):
-            return render_template('tickets.html', username = user, ticket=ticket, qrcode = filename)
-        else:
-            return render_template('tickets.html', username = user, message = "Du hast keine Tickets") 
-        
+    data = request.get_json()
+    user_id = data['userid']
+    tickets = db.getAllTicketsFromUser(user_id)
+    redeemed_tickets = db.getUser_redeemed_tickets(user_id)
+
+    t = db.groupTickets(tickets, redeemed_tickets)
+    result = []
+    for i in range(len(t)):
+        obj = db.Ticket(t[i][0], t[i][1], t[i][2], t[i][3], t[i][4], t[i][5], t[i][6], t[i][7], t[i][8])
+        result.append(obj.__dict__)
+        print(t[i])
+    if bool(tickets):
+        return jsonify(result), 200
     else:
-        return redirect(url_for('login'))
+        return '', 200
+
 
 @app.route('/mytickets/<serial_no>', methods=['GET', 'POST'])
 def qrcode(serial_no):
@@ -135,6 +148,7 @@ def qrcode(serial_no):
         db.createQRCode(serial_no)
     
     return redirect(url_for('myTickets'))
+
 
 @app.route('/prove/<serial_no>', methods=['GET', 'POST'])
 def proveQR(serial_no):
@@ -150,7 +164,8 @@ def proveQR(serial_no):
             return render_template('prove.html', message = "Ticket existiert nicht")
     else:
         return redirect(url_for('index'))
-    
+
+
 @app.route('/profile/restartpassword', methods=['GET', 'POST'])
 def restartpassword():
     if "user" in session:
@@ -162,11 +177,13 @@ def restartpassword():
             return redirect(url_for('logout'))
     else:
         return redirect(url_for('index'))
-       
+
+
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session.pop("user", None)
     return redirect(url_for('index'))
+
 
 @app.route('/buy', methods=['POST'])
 def buy():
@@ -175,9 +192,12 @@ def buy():
     print(db.getTicket(ticket_id))
     ticket = db.ticketFromDB(db.getTicket(ticket_id)[0])
     db.registrateTicket(db.generateUUID(), data.get("userid",0), ticket_id, data.get("vorname"), data.get("Nachname"), data.get("Geburtsdatum"), ticket.valid_from, ticket.valid_to, data.get("Tarif"), data.get("Handynummer"), data.get("E-Mail-Adresse"))
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return redirect(url_for('index'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
