@@ -172,7 +172,8 @@ def logout():
 def buy():
     data = request.get_json()
     ticket_id = data.get("ticketid", 1)
-    ticket = db.ticketFromDB(db.getTicket(ticket_id))
+    print(db.getTicket(ticket_id))
+    ticket = db.ticketFromDB(db.getTicket(ticket_id)[0])
     db.registrateTicket(db.generateUUID(), data.get("userid",0), ticket_id, data.get("vorname"), data.get("Nachname"), data.get("Geburtsdatum"), ticket.valid_from, ticket.valid_to, data.get("Tarif"), data.get("Handynummer"), data.get("E-Mail-Adresse"))
 @app.errorhandler(404)
 def page_not_found(e):
