@@ -176,7 +176,7 @@ def buy():
     ticket_id = data.get("ticketid", 1)
     print(db.getTicket(ticket_id))
     ticket = db.ticketFromDB(db.getTicket(ticket_id)[0])
-    db.registrateTicket(uuid.uuid4().hex, data.get("userid",0), ticket_id, data.get("vorname"), data.get("Nachname"), data.get("Geburtsdatum"), ticket.valid_from, ticket.valid_to, data.get("Tarif"), data.get("Handynummer"), data.get("E-Mail-Adresse"))
+    db.registrateTicket(uuid.uuid4().hex, data.get("userid",0), ticket_id, data.get("vorname"), data.get("Nachname"), data.get("Geburtsdatum"), ticket.valid_from, ticket.valid_to, 5, data.get("Tarif"), data.get("Handynummer"), data.get("E-Mail-Adresse"))
     return "" , 200
 @app.errorhandler(404)
 def page_not_found(e):
