@@ -374,3 +374,21 @@ def updateTicketActive(serial_no, state, reason):
     cur.close()
     conn.close()
     return result[0][0] == state
+
+def getDateMinus30Days():
+    conn = connection()
+    cur = conn.cursor()
+    cur.execute("SELECT CURRENT_DATE - 30")
+    conn.commit()
+    cur.close()
+    conn.close()
+    return result
+
+def deleteOldRedeemedTickets(date):
+    conn = connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM redeemed_tickets WHERE used_at <=%s", (date,))
+    conn.commit()
+    cur.close()
+    conn.close()
+

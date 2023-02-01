@@ -5,6 +5,7 @@ from flask import Flask, render_template, redirect, request, session, url_for, j
 from DBOperations import DBQueries as db
 from fileinput import filename
 from flask_cors import CORS
+from flask_apscheduler import APScheduler
 
 app = Flask(__name__, static_folder="Photos")
 CORS(app)
@@ -201,6 +202,12 @@ def buy():
 def page_not_found(e):
     return redirect(url_for('index'))
 
-
+def deleteDataAfter30Days():
+    deleteDate = db.getDateMinus30Days()
+    db.deleteOldRedeemedTickets(deleteDate)
+    
 if __name__ == '__main__':
+    scheduler = APScheduler()
+    scheduler.add_job(func=deleteDataAfter30Days, trigger='interval', id='job', days=30) #days sollte auf 1 gestellt werden, damit der job taeglich laeuft
+    scheduler.start()
     app.run(debug=True)
