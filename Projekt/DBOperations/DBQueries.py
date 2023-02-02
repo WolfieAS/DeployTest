@@ -275,6 +275,19 @@ def getAllTicketsFromUser(user_id):
     return result
 
 
+def getAllActiveTicketsFromUser(user_id):
+    conn = connection()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT * FROM registrated_tickets WHERE user_id=%s AND active='true'",
+        (user_id,))
+    conn.commit()
+    result = (cur.fetchall())
+    cur.close()
+    conn.close()
+    return result
+
+
 def registrateTicket(serial_no, user_id, ticket_id, firstname, lastname, birthday, valid_from, valid_to, uses_left, subtype, phonenumber, email):
     conn = connection()
     cur = conn.cursor()

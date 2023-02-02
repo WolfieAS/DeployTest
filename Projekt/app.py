@@ -129,16 +129,13 @@ def mainmenu():
 def myTickets():
     data = request.get_json()
     user_id = data['userid']
-    tickets = db.getAllTicketsFromUser(user_id)
-    redeemed_tickets = db.getUser_redeemed_tickets(user_id)
+    t = db.getAllActiveTicketsFromUser(user_id)
 
-    t = db.groupTickets(tickets, redeemed_tickets)
     result = []
     for i in range(len(t)):
-        obj = db.Ticket(t[i][0], t[i][1], t[i][2], t[i][3], t[i][4], t[i][5], t[i][6], t[i][7], t[i][8])
+        obj = db.RegTicket(t[i][0], t[i][1], t[i][2], t[i][3], t[i][4], t[i][5], t[i][6], t[i][7], t[i][8], t[i][9], t[i][10], t[i][11], t[i][12], t[i][13])
         result.append(obj.__dict__)
-        print(t[i])
-    if bool(tickets):
+    if bool(t):
         return jsonify(result), 200
     else:
         return '', 200
