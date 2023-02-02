@@ -6,4 +6,4 @@ pyqrcode == 1.2.1
 Pillow == 9.4.0
 flask-cors == 3.0.10
 numpy == 1.21.6
-APScheduler == 3.10.0
+Flask-APScheduler == 1.12.4 
