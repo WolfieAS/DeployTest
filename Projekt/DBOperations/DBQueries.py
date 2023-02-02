@@ -68,6 +68,8 @@ class RegTicket:
     ban_reason: str
     uses_left: int
     subtype: int
+    phonenumber: str
+    email: str
 
     def __init__(self, serial_no, user_id, ticket_id, firstname, lastname, dob, valid_from, valid_to, active, ban_reason, uses_left, subtype, phonenumber, email):
         self.serial_no = serial_no
@@ -227,6 +229,7 @@ def getTicket(ticket_id):
     cur.close()
     conn.close()
     return result
+
 def getRegTicket(serial_no):
     conn = connection()
     cur = conn.cursor()

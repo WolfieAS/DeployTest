@@ -144,6 +144,24 @@ def myTickets():
         return '', 200
 
 
+@app.route('/proveTicket', methods=['POST'])
+def proveTicket():
+    data = request.get_json()
+    serial_no = data['serialno']   
+    t = db.getRegTicket(serial_no)
+    result = []
+    for i in range(len(t)):
+        obj = db.RegTicket(t[i][0], t[i][1], t[i][2], t[i][3], t[i][4], t[i][5], t[i][6], t[i][7], t[i][8], t[i][9], t[i][10], t[i][11], t[i][12],t[i][13])
+        result.append(obj.__dict__)
+    if bool(t):
+        return jsonify(result), 200
+    else:
+        return 'serialno no found', 400
+    
+        
+
+    
+
 @app.route('/mytickets/<serial_no>', methods=['GET', 'POST'])
 def qrcode(serial_no):
     
