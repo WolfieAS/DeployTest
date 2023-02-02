@@ -149,15 +149,11 @@ def proveTicket():
     result = []
     for i in range(len(t)):
         obj = db.RegTicket(t[i][0], t[i][1], t[i][2], t[i][3], t[i][4], t[i][5], t[i][6], t[i][7], t[i][8], t[i][9], t[i][10], t[i][11], t[i][12],t[i][13])
-        result.append(obj.__dict__)
     if bool(t):
-        return jsonify(result), 200
+        return obj.__dict__, 200
     else:
         return 'serialno no found', 400
-    
-        
-
-    
+       
 
 @app.route('/mytickets/<serial_no>', methods=['GET', 'POST'])
 def qrcode(serial_no):
@@ -168,7 +164,7 @@ def qrcode(serial_no):
     return redirect(url_for('myTickets'))
 
 
-@app.route('/prove/<serial_no>', methods=['GET', 'POST'])
+'''@app.route('/prove/<serial_no>', methods=['GET', 'POST'])
 def proveQR(serial_no):
     serial_no = str(serial_no)
     usertype = session['usertype']
@@ -181,7 +177,7 @@ def proveQR(serial_no):
         else:
             return render_template('prove.html', message = "Ticket existiert nicht")
     else:
-        return redirect(url_for('index'))
+        return redirect(url_for('index'))'''
 
 
 @app.route('/profile/restartpassword', methods=['GET', 'POST'])
