@@ -131,11 +131,12 @@ def myTickets():
     user_id = data['userid']
     t = db.getAllActiveTicketsFromUser(user_id)
 
-    result = []
+    result = {}
     for i in range(len(t)):
         obj = db.RegTicket(t[i][0], t[i][1], t[i][2], t[i][3], t[i][4], t[i][5], t[i][6], t[i][7], t[i][8], t[i][9], t[i][10], t[i][11], t[i][12], t[i][13])
+        result[i] = obj.__dict__
     if bool(t):
-        return obj.__dict__, 200
+        return jsonify(result), 200
     else:
         return '', 200
 
