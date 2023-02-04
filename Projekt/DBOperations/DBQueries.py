@@ -168,7 +168,7 @@ def groupTickets(tickets, redeemed_tickets):
         print(tickets[i])
     return tickets
 
-def checkTicket(ticket_id, serial_no, location):
+def checkTicket(serial_no, location):
     dbOut = getRegTicket(serial_no)
     if len(dbOut[0]) == 0:
         return False
@@ -177,7 +177,7 @@ def checkTicket(ticket_id, serial_no, location):
         return False
     if location == "Zermatter Bergbahn":
         return checkTicketLimited(regTicket,location)
-    return int(ticket_id) == regTicket.ticket_id
+    return True
 
 def checkTicketLimited(regTicket,location):
     today = datetime.now().strftime("%Y-%m-%d")
