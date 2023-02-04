@@ -66,8 +66,9 @@ def login():
 
 @app.route('/checkticket', methods=['GET'])
 def check():
-    serial_no = request.args.get("serialno")
-    location = request.args.get("location")
+    data = request.get_json()
+    serial_no = data.get("serialno")
+    location = data.get("location")
     return jsonify(db.checkTicket(serial_no, location))  , 200
 
 
