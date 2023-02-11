@@ -64,7 +64,7 @@ def login():
         return "",403
 
 
-@app.route('/checkticket', methods=['GET'])
+@app.route('/checkticket', methods=['POST'])
 def check():
     data = request.get_json()
     serial_no = data.get("serialno")

@@ -110,7 +110,10 @@ def ticketFromDB(dbOut):
 
 def checkUser(email, password):
     user = getUser(email)
-    user = userFromDB(user[0])
+    try:
+        user = userFromDB(user[0])
+    except:
+        return False, None
     if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
         return True, user
     else:
