@@ -291,11 +291,11 @@ def getAllActiveTicketsFromUser(user_id):
     return result
 
 
-def registrateTicket(serial_no, user_id, ticket_id, firstname, lastname, birthday, valid_from, valid_to, uses_left, subtype, phonenumber, email):
+def registrateTicket(serial_no, user_id, ticket_id, firstname, lastname, birthday, valid_from, valid_to, uses_left, subtype, phonenumber, email, age):
     conn = connection()
     cur = conn.cursor()
-    cur.execute("INSERT INTO registrated_tickets (serial_no, user_id, ticket_id, firstname, lastname, birthday, valid_from, valid_to, uses_left, subtype, phonenumber, email) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (serial_no, user_id, ticket_id, firstname, lastname, birthday, valid_from, valid_to, uses_left, subtype, phonenumber, email))
+    cur.execute("INSERT INTO registrated_tickets (serial_no, user_id, ticket_id, firstname, lastname, birthday, valid_from, valid_to, uses_left, subtype, phonenumber, email, age) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                (serial_no, user_id, ticket_id, firstname, lastname, birthday, valid_from, valid_to, uses_left, subtype, phonenumber, email, age))
     conn.commit()
     cur.close()
     conn.close()
@@ -359,7 +359,6 @@ def used_today(serial_no, today):
     result = (cur.fetchall())
     cur.close()
     conn.close()
-    print(result)
     return result
 
 def update_uses(serial_no,uses_left):
