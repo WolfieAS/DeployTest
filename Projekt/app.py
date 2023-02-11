@@ -206,7 +206,7 @@ def buy():
     ticket_id = data.get("ticketid", 1)
     print(db.getTicket(ticket_id))
     ticket = db.ticketFromDB(db.getTicket(ticket_id)[0])
-    db.registrateTicket(uuid.uuid4().hex, data.get("userid",0), ticket_id, skipass.get("vorname"), skipass.get("Nachname"), skipass.get("Geburtsdatum"), ticket.valid_from, ticket.valid_to, 5, skipass.get("Tarif"), skipass.get("Handynummer"), skipass.get("email"), skipass.get("alter"))
+    db.registrateTicket(uuid.uuid4().hex, data.get("userid",0), ticket_id, skipass.get("firstName"), skipass.get("lastName"), skipass.get("birthday"), ticket.valid_from, ticket.valid_to, 5, skipass.get("subtype"), skipass.get("phonenumber"), skipass.get("email"), skipass.get("age"))
     return "" , 200
 
 
